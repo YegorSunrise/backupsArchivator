@@ -8,5 +8,5 @@ public interface FileGenerator {
 
     void createFiles();
 
-    void setUserMap(Map<String,User> userMap);
+    void setUserMap(Map<String, User> userMap);
 }

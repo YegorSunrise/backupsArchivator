@@ -1,7 +1,6 @@
 import addition.UnArchive;
 import archivator.BackupArchivator;
 import generator.FileGenerator;
-import generator.LightFileGenerator;
 import model.User;
 import org.junit.Before;
 import org.junit.Test;

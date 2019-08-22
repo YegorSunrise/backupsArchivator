@@ -18,6 +18,6 @@ public class MediumFileGenerator extends AbstractFileGenerator {
         for (Map.Entry<String, User> userEntry : userMap.entrySet()) {
             createFiles(userEntry, 500, () -> UUID.randomUUID().toString(), root);
         }
-        logger.log(Level.INFO,"generate complete.");
+        logger.log(Level.INFO, "generate complete.");
     }
 }

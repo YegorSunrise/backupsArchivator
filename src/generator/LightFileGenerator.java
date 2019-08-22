@@ -18,7 +18,7 @@ public class LightFileGenerator extends AbstractFileGenerator {
         for (Map.Entry<String, User> userEntry : userMap.entrySet()) {
             createFiles(userEntry, 17000, () -> "X", root);
         }
-        logger.log(Level.INFO,"generate complete.");
+        logger.log(Level.INFO, "generate complete.");
     }
 
 

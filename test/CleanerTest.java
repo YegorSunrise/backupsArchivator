@@ -1,7 +1,6 @@
 import addition.Cleaner;
 import archivator.BackupArchivator;
 import generator.FileGenerator;
-import generator.LightFileGenerator;
 import model.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +39,7 @@ public class CleanerTest {
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         user1.setActive(false);
         user2.setActive(false);
         user3.setActive(false);
@@ -56,14 +55,14 @@ public class CleanerTest {
 
 
     @Test
-    public void removeInactiveUsers(){
+    public void removeInactiveUsers() {
         archivator.archive(userMap);
         cleaner.removeInactiveUsers(userMap, 100);
         assertEquals(new File(root).listFiles().length, 1);
     }
 
     @Test
-    public void inactivePeriodNotEnd(){
+    public void inactivePeriodNotEnd() {
         user4.setActive(false);
         userMap.put(user4.getUsername(), user4);
         archivator.archive(userMap);
@@ -72,13 +71,13 @@ public class CleanerTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void negativeInactiveDays(){
+    public void negativeInactiveDays() {
         archivator.archive(userMap);
         cleaner.removeInactiveUsers(userMap, -1);
     }
 
     @Test(expected = RuntimeException.class)
-    public void nullMap(){
+    public void nullMap() {
         archivator.archive(userMap);
         cleaner.removeInactiveUsers(null, 100);
     }

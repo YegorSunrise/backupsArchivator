@@ -19,6 +19,7 @@ public class Cleaner implements DirectoryCleaner {
     private static Logger logger = Logger.getLogger(Cleaner.class.getName());
 
     public void removeInactiveUsers(Map<String, User> userMap, int inactiveDays) {
+
         logger.log(Level.INFO, "inactive users remove...");
         if (userMap == null || inactiveDays < 0) {
             throw new RuntimeException("check parameters: userMap must not be null and inactiveDays can't be < 0");

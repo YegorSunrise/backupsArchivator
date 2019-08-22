@@ -25,7 +25,7 @@ public class Populate {
         for (int i = 0; i < quantity; i++) {
             User user = new User(generateName(), generateDate());
             user.setActive(!user.getLastActive().isBefore(LocalDate.now().minusDays(91)));
-           // user.setActive(false);
+            // user.setActive(false);
             userMap.put(user.getUsername(), user);
         }
         logger.log(Level.INFO, "generate complete.");

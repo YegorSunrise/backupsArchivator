@@ -30,7 +30,7 @@ public class UnArchive {
             throw new RuntimeException("user must not be null");
         }
 
-        if(user.isActive()){
+        if (user.isActive()) {
             throw new RuntimeException("user is not in archive user: " + user.getUsername());
         }
         logger.log(Level.INFO, "unarchive for user " + user.getUsername());
