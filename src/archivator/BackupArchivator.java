@@ -1,6 +1,6 @@
 package archivator;
 
-import addition.UnZipper;
+import addition.UnArchive;
 import model.User;
 import util.CreatePath;
 import util.Volume;
@@ -20,9 +20,12 @@ public class BackupArchivator implements Archivator {
 
     private String root = CreatePath.getRoot();
 
-    private static Logger logger = Logger.getLogger(UnZipper.class.getName());
+    private static Logger logger = Logger.getLogger(UnArchive.class.getName());
 
     public void archive(Map<String, User> userMap) {
+        if (userMap == null) {
+            throw new RuntimeException("check parameters: userMap must not be null");
+        }
         logger.log(Level.INFO, "archiving...");
         List<File> allUsernameDir = Arrays.asList(Objects.requireNonNull(new File(root).listFiles()));
         for (Map.Entry<String, User> userEntry : userMap.entrySet()) {

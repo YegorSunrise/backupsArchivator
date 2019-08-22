@@ -13,11 +13,11 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class UnZipper {
+public class UnArchive {
 
     private String root = CreatePath.getRoot();
 
-    private static Logger logger = Logger.getLogger(UnZipper.class.getName());
+    private static Logger logger = Logger.getLogger(UnArchive.class.getName());
 
     public void getFilesFromArchive(Collection<User> users) {
         for (User user : users) {
@@ -31,7 +31,7 @@ public class UnZipper {
         }
 
         if(user.isActive()){
-            throw new RuntimeException("user is not in archive");
+            throw new RuntimeException("user is not in archive user: " + user.getUsername());
         }
         logger.log(Level.INFO, "unarchive for user " + user.getUsername());
 
@@ -50,7 +50,7 @@ public class UnZipper {
             ZipEntry zipEntry = zis.getNextEntry();
 
             while (zipEntry != null) {
-                File newFile = newFile(destDir, zipEntry);
+                File newFile = new File(destDir, zipEntry.getName());
                 FileOutputStream fos = new FileOutputStream(newFile);
                 int len;
                 while ((len = zis.read(buffer)) > 0) {
@@ -65,19 +65,5 @@ public class UnZipper {
         }
         new File(archive.toString()).delete();
         logger.log(Level.INFO, "unarchive complete.");
-    }
-
-
-    private static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
-        File destFile = new File(destinationDir, zipEntry.getName());
-
-        String destDirPath = destinationDir.getCanonicalPath();
-        String destFilePath = destFile.getCanonicalPath();
-
-        if (!destFilePath.startsWith(destDirPath + File.separator)) {
-            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
-        }
-
-        return destFile;
     }
 }

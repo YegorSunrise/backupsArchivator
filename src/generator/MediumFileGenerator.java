@@ -11,10 +11,6 @@ public class MediumFileGenerator extends AbstractFileGenerator {
 
     private static Logger logger = Logger.getLogger(MediumFileGenerator.class.getName());
 
-    public MediumFileGenerator(Map<String, User> userMap) {
-        super(userMap);
-    }
-
     @Override
     public void createFiles() {
         logger.log(Level.INFO, "generate medium files pack...");

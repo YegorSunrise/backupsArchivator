@@ -11,10 +11,6 @@ public class LightFileGenerator extends AbstractFileGenerator {
 
     private static Logger logger = Logger.getLogger(LightFileGenerator.class.getName());
 
-    public LightFileGenerator(Map<String, User> userMap) {
-        super(userMap);
-    }
-
     @Override
     public void createFiles() {
         logger.log(Level.INFO, "generate light files pack...");

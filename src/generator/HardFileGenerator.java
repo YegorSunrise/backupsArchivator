@@ -17,10 +17,6 @@ public class HardFileGenerator extends AbstractFileGenerator implements Archivat
 
     private static Logger logger = Logger.getLogger(HardFileGenerator.class.getName());
 
-    public HardFileGenerator(Map<String, User> userMap) {
-        super(userMap);
-    }
-
     @Override
     public void createFiles() {
         logger.log(Level.INFO, "generate hard files pack...");

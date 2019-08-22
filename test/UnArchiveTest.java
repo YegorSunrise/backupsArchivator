@@ -1,3 +1,4 @@
+import addition.UnArchive;
 import archivator.BackupArchivator;
 import generator.FileGenerator;
 import generator.LightFileGenerator;
@@ -5,23 +6,21 @@ import model.User;
 import org.junit.Before;
 import org.junit.Test;
 import util.CreatePath;
-import util.Volume;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
-public class BackupArchivatorTest {
+public class UnArchiveTest {
 
     private String root = CreatePath.getRoot();
 
@@ -32,10 +31,10 @@ public class BackupArchivatorTest {
     private User user4 = new User("name4", LocalDate.of(2016, 9, 19));
 
     private BackupArchivator archivator = new BackupArchivator();
-
+    private UnArchive unArchive = new UnArchive();
     private FileGenerator fileGenerator;
 
-    public BackupArchivatorTest(FileGenerator fileGenerator) {
+    public UnArchiveTest(FileGenerator fileGenerator) {
         this.fileGenerator = fileGenerator;
     }
 
@@ -49,35 +48,16 @@ public class BackupArchivatorTest {
         userMap.put(user2.getUsername(), user2);
         userMap.put(user3.getUsername(), user3);
         userMap.put(user4.getUsername(), user4);
+
         fileGenerator.setUserMap(userMap);
         fileGenerator.createFiles();
-
+        archivator.archive(userMap);
     }
 
     @Test
-    public void archive() throws IOException {
-        archivator.archive(userMap);
+    public void getFilesFromArchive() throws IOException {
+        unArchive.getFilesFromArchive(userMap.values().stream().filter(x -> !x.isActive()).collect(Collectors.toList()));
         List<Path> collect = Files.walk(Paths.get(root))
-                .filter(Files::isRegularFile)
-                .filter(x -> x.toFile().getName().contains(".zip"))
-                .collect(Collectors.toList());
-        assertEquals(collect.size(), 3);
-    }
-
-    @Test
-    public void folderSizeChanged() {
-        File allBackups = new File(root);
-        long volumeBeforeArchive = Volume.getVolume(allBackups);
-        archivator.archive(userMap);
-        long volumeAfterArchive = Volume.getVolume(allBackups);
-        assertNotEquals(volumeAfterArchive, volumeBeforeArchive);
-    }
-
-    @Test
-    public void notArchive() throws IOException {
-        archivator.archive(userMap);
-        File notArchive = new File(root, user4.getUsername());
-        List<Path> collect = Files.walk(Paths.get(notArchive.toString()))
                 .filter(Files::isRegularFile)
                 .filter(x -> x.toFile().getName().contains(".zip"))
                 .collect(Collectors.toList());
@@ -85,18 +65,23 @@ public class BackupArchivatorTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void nullMap(){
-        archivator.archive(null);
+    public void unArchiveActiveUser(){
+        unArchive.getFilesFromArchive(userMap.values());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void nullUser(){
+        user1 = null;
+        unArchive.getFilesFromArchive(user1);
     }
 
     @Test
-    public void emptyMap() throws IOException {
-        archivator.archive(new HashMap<>());
+    public void emptyList() throws IOException {
+        unArchive.getFilesFromArchive(new ArrayList<>());
         List<Path> collect = Files.walk(Paths.get(root))
                 .filter(Files::isRegularFile)
                 .filter(x -> x.toFile().getName().contains(".zip"))
                 .collect(Collectors.toList());
-        assertEquals(collect.size(), 0);
+        assertEquals(collect.size(), 3);
     }
-
 }

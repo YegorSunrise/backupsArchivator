@@ -21,7 +21,8 @@ public abstract class AbstractFileGenerator implements FileGenerator, DirectoryC
 
     private static Logger logger = Logger.getLogger(AbstractFileGenerator.class.getName());
 
-    public AbstractFileGenerator(Map<String, User> userMap) {
+    @Override
+    public void setUserMap(Map<String, User> userMap) {
         this.userMap = userMap;
     }
 
@@ -43,7 +44,7 @@ public abstract class AbstractFileGenerator implements FileGenerator, DirectoryC
         if (!usersBuf.exists()) {
             usersBuf.mkdir();
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 70; i++) {
             Path fullPathToFile = new File(usersBuf, UUID.randomUUID().toString()).toPath();
             try (BufferedWriter bw = Files.newBufferedWriter(fullPathToFile)) {
                 for (int j = 0; j < lines; j++) {
@@ -52,7 +53,12 @@ public abstract class AbstractFileGenerator implements FileGenerator, DirectoryC
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            logger.log(Level.INFO, "create file " + fullPathToFile.getFileName() + " size: " + (fullPathToFile.toFile().length() / 1024) + "kb");
+            logger.log(Level.INFO,
+                    "create file "
+                            + fullPathToFile.getFileName()
+                            + " size: "
+                            + (fullPathToFile.toFile().length() / 1024)
+                            + "kb");
         }
 
     }

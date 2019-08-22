@@ -1,12 +1,11 @@
 package util;
 
 import addition.Cleaner;
-import addition.UnZipper;
+import addition.UnArchive;
 import generator.FileGenerator;
 import generator.LightFileGenerator;
 import archivator.BackupArchivator;
 import model.User;
-import util.Populate;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,9 +26,10 @@ public class Runner {
 
       //  userMap.forEach((x, y) -> System.out.println(y));
         FileGenerator fileGen =
-                new LightFileGenerator(userMap);
-//        new MediumFileGenerator(userMap);
-//                new HardFileGenerator(userMap);
+                new LightFileGenerator();
+//        new MediumFileGenerator();
+//                new HardFileGenerator();
+        fileGen.setUserMap(userMap);
         fileGen.createFiles();
         BackupArchivator backupArchivator = new BackupArchivator();
         backupArchivator.archive(userMap);
@@ -38,8 +38,9 @@ public class Runner {
 
         cleaner.removeInactiveUsers(userMap, 200);
 
-        UnZipper unZipper = new UnZipper();
-        unZipper.getFilesFromArchive(userMap.values().stream().filter(x -> !x.isActive()).collect(Collectors.toList()));
+        UnArchive unArchive = new UnArchive();
+        unArchive.getFilesFromArchive(userMap.values().stream().filter(x -> !x.isActive()).collect(Collectors.toList()));
+
 
     }
 

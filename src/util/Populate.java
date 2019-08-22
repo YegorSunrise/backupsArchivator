@@ -16,6 +16,10 @@ public class Populate {
 
     private static Logger logger = Logger.getLogger(Populate.class.getName());
 
+
+    private Populate() {
+    }
+
     public static Map<String, User> getUsers(int quantity) {
         logger.log(Level.INFO, "generate users... quantity: " + quantity);
         for (int i = 0; i < quantity; i++) {

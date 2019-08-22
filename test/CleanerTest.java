@@ -1,3 +1,4 @@
+import addition.Cleaner;
 import archivator.BackupArchivator;
 import generator.FileGenerator;
 import generator.LightFileGenerator;
@@ -5,7 +6,6 @@ import model.User;
 import org.junit.Before;
 import org.junit.Test;
 import util.CreatePath;
-import util.Volume;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
-public class BackupArchivatorTest {
+public class CleanerTest {
+
 
     private String root = CreatePath.getRoot();
 
@@ -30,17 +30,17 @@ public class BackupArchivatorTest {
     private User user2 = new User("name2", LocalDate.of(2019, 3, 16));
     private User user3 = new User("name3", LocalDate.of(2017, 5, 2));
     private User user4 = new User("name4", LocalDate.of(2016, 9, 19));
-
     private BackupArchivator archivator = new BackupArchivator();
+    private Cleaner cleaner = new Cleaner();
 
     private FileGenerator fileGenerator;
 
-    public BackupArchivatorTest(FileGenerator fileGenerator) {
+    public CleanerTest(FileGenerator fileGenerator) {
         this.fileGenerator = fileGenerator;
     }
 
     @Before
-    public void setUp() {
+    public void setUp(){
         user1.setActive(false);
         user2.setActive(false);
         user3.setActive(false);
@@ -54,49 +54,43 @@ public class BackupArchivatorTest {
 
     }
 
+
     @Test
-    public void archive() throws IOException {
+    public void removeInactiveUsers(){
         archivator.archive(userMap);
+        cleaner.removeInactiveUsers(userMap, 100);
+        assertEquals(new File(root).listFiles().length, 1);
+    }
+
+    @Test
+    public void inactivePeriodNotEnd(){
+        user4.setActive(false);
+        userMap.put(user4.getUsername(), user4);
+        archivator.archive(userMap);
+        cleaner.removeInactiveUsers(userMap, 200);
+        assertEquals(new File(root).listFiles().length, 1);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void negativeInactiveDays(){
+        archivator.archive(userMap);
+        cleaner.removeInactiveUsers(userMap, -1);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void nullMap(){
+        archivator.archive(userMap);
+        cleaner.removeInactiveUsers(null, 100);
+    }
+
+    @Test
+    public void emptyMap() throws IOException {
+        archivator.archive(userMap);
+        cleaner.removeInactiveUsers(new HashMap<>(), 100);
         List<Path> collect = Files.walk(Paths.get(root))
                 .filter(Files::isRegularFile)
                 .filter(x -> x.toFile().getName().contains(".zip"))
                 .collect(Collectors.toList());
         assertEquals(collect.size(), 3);
     }
-
-    @Test
-    public void folderSizeChanged() {
-        File allBackups = new File(root);
-        long volumeBeforeArchive = Volume.getVolume(allBackups);
-        archivator.archive(userMap);
-        long volumeAfterArchive = Volume.getVolume(allBackups);
-        assertNotEquals(volumeAfterArchive, volumeBeforeArchive);
-    }
-
-    @Test
-    public void notArchive() throws IOException {
-        archivator.archive(userMap);
-        File notArchive = new File(root, user4.getUsername());
-        List<Path> collect = Files.walk(Paths.get(notArchive.toString()))
-                .filter(Files::isRegularFile)
-                .filter(x -> x.toFile().getName().contains(".zip"))
-                .collect(Collectors.toList());
-        assertEquals(collect.size(), 0);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void nullMap(){
-        archivator.archive(null);
-    }
-
-    @Test
-    public void emptyMap() throws IOException {
-        archivator.archive(new HashMap<>());
-        List<Path> collect = Files.walk(Paths.get(root))
-                .filter(Files::isRegularFile)
-                .filter(x -> x.toFile().getName().contains(".zip"))
-                .collect(Collectors.toList());
-        assertEquals(collect.size(), 0);
-    }
-
 }
